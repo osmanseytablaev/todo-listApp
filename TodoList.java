@@ -1,19 +1,20 @@
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.event.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TodoList extends Application {
-
+    private List<TaskEntry> taskEntries = new ArrayList<>();
+    private Rectangle redRectangle;
     public static void main(String[] args) {
         launch(args);
     }
@@ -22,7 +23,7 @@ public class TodoList extends Application {
         primaryStage.setTitle("To-Do List App");
 
         Pane stackPane = new Pane();
-        Rectangle redRectangle = new Rectangle(400, 300);
+        redRectangle = new Rectangle(400, 300);
         redRectangle.setFill(Color.DARKBLUE);
         redRectangle.setArcWidth(20);
         redRectangle.setArcHeight(20);
@@ -54,6 +55,67 @@ public class TodoList extends Application {
         primaryStage.setScene(myScene);
 
         primaryStage.show();
+        btnGetText.setOnAction(event -> {
+            // Create a new label with the text from the text field
+            Label taskLabel = new Label(textField.getText());
+
+            // Create a delete button
+            Button deleteButton = new Button("Delete");
+            deleteButton.setOnAction(deleteEvent -> {
+                // Remove the label and delete button when the delete button is clicked
+                stackPane.getChildren().removeAll(taskLabel, deleteButton);
+
+                // Also remove the task entry from the list
+                taskEntries.removeIf(entry -> entry.getLabel() == taskLabel);
+
+                // Adjust the height of the rectangle
+                adjustRectangleHeight();
+            });
+
+            // Add the new task entry to the list
+            TaskEntry taskEntry = new TaskEntry(taskLabel, deleteButton);
+            taskEntries.add(taskEntry);
+
+            // Position the label and delete button within the rectangle
+            double labelX = redRectangle.getLayoutX() + 10;
+            double labelY = redRectangle.getLayoutY() + redRectangle.getHeight() + 10 + taskEntries.size() * 40;
+            double buttonX = labelX + taskLabel.getWidth() + 10;
+
+            taskLabel.setLayoutX(labelX);
+            taskLabel.setLayoutY(labelY);
+            deleteButton.setLayoutX(buttonX);
+            deleteButton.setLayoutY(labelY);
+
+            // Adjust the height of the rectangle
+            adjustRectangleHeight();
+
+            // Add the label and delete button to the stackPane
+            stackPane.getChildren().addAll(taskLabel, deleteButton);
+        });
+    }
+
+    private void adjustRectangleHeight() {
+        // Adjust the height of the rectangle based on the number of tasks
+        double newHeight = redRectangle.getHeight() + taskEntries.size() * 40;
+        redRectangle.setHeight(newHeight);
+    }
+
+    private static class TaskEntry {
+        private Label label;
+        private Button deleteButton;
+
+        public TaskEntry(Label label, Button deleteButton) {
+            this.label = label;
+            this.deleteButton = deleteButton;
+        }
+
+        public Label getLabel() {
+            return label;
+        }
+
+        public Button getDeleteButton() {
+            return deleteButton;
+        }
     }
 }
 
