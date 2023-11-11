@@ -56,27 +56,15 @@ public class TodoList extends Application {
 
         primaryStage.show();
         btnGetText.setOnAction(event -> {
-            // Create a new label with the text from the text field
             Label taskLabel = new Label(textField.getText());
-
-            // Create a delete button
             Button deleteButton = new Button("Delete");
             deleteButton.setOnAction(deleteEvent -> {
-                // Remove the label and delete button when the delete button is clicked
                 stackPane.getChildren().removeAll(taskLabel, deleteButton);
-
-                // Also remove the task entry from the list
                 taskEntries.removeIf(entry -> entry.getLabel() == taskLabel);
-
-                // Adjust the height of the rectangle
                 adjustRectangleHeight();
             });
-
-            // Add the new task entry to the list
             TaskEntry taskEntry = new TaskEntry(taskLabel, deleteButton);
             taskEntries.add(taskEntry);
-
-            // Position the label and delete button within the rectangle
             double labelX = redRectangle.getLayoutX() + 10;
             double labelY = redRectangle.getLayoutY() + redRectangle.getHeight() + 10 + taskEntries.size() * 40;
             double buttonX = labelX + taskLabel.getWidth() + 10;
@@ -85,17 +73,13 @@ public class TodoList extends Application {
             taskLabel.setLayoutY(labelY);
             deleteButton.setLayoutX(buttonX);
             deleteButton.setLayoutY(labelY);
-
-            // Adjust the height of the rectangle
             adjustRectangleHeight();
 
-            // Add the label and delete button to the stackPane
             stackPane.getChildren().addAll(taskLabel, deleteButton);
         });
     }
 
     private void adjustRectangleHeight() {
-        // Adjust the height of the rectangle based on the number of tasks
         double newHeight = redRectangle.getHeight() + taskEntries.size() * 40;
         redRectangle.setHeight(newHeight);
     }
